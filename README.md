@@ -1,5 +1,86 @@
 # TinyI2C Library
 
+
+## my attempt
+```
+FLASH 9630 byte -> 7476 byte
+RAM 560 byte -> 388 byte
+
+#include "TinyI2CMaster.h" //2022-07-10 test done ok.
+// Sketch uses 7476 bytes (23%) of program storage space. Maximum is 32256 bytes.
+// Global variables use 388 bytes (18%) of dynamic memory, leaving 1660 bytes for local variables. Maximum is 2048 bytes.
+
+//#include <Wire.h> // Arduino Wire.h library, 2022-07-10, abandoned
+//compiled size, Sketch uses 9630 bytes (29%) of program storage space. Maximum is 32256 bytes.
+//Global variables use 560 bytes (27%) of dynamic memory, leaving 1488 bytes for local variables. Maximum is 2048 bytes.
+
+
+
+void AB1805::begin()
+{
+  TinyI2C.init();
+}
+
+//  // 2022-07-10 test done ok.
+uint8_t AB1805::read_rtc_register(const uint8_t rtc_register) {
+  uint8_t data;                 // `data` will store the register data   
+  TinyI2C.start(AM1805,0);      // Initialize the Tx buffer
+  TinyI2C.write(rtc_register);  // Send slave register address in Tx buffer
+  TinyI2C.restart(AM1805, (uint8_t) 1);    // send a restart to keep connection alive, Read one byte from slave register address 
+  data = TinyI2C.read();                   // Fill Rx buffer with result
+  TinyI2C.stop();   // stop I2C
+  return data;      // Return data read from slave register
+  
+}
+
+
+  // 2022-07-10 test done ok.
+uint8_t AB1805::write_rtc_register(const uint8_t rtc_register, const uint8_t data)
+{
+  TinyI2C.start(AM1805,0);      // Initialize the Tx buffer
+  TinyI2C.write(rtc_register);  // send slave register address in Tx buffer
+  TinyI2C.write(data);         // send data in Tx buffer
+  TinyI2C.stop();       // Stop I2C
+  return true;
+}
+
+
+// Wire library of arduino used, no uses, 2022-07-10
+/*
+void AB1805::begin()
+{
+	Wire.begin();
+}
+
+
+uint8_t AB1805::read_rtc_register(const uint8_t rtc_register) {
+	uint8_t data;									// `data` will store the register data	 
+	Wire.beginTransmission(AM1805);					// Initialize the Tx buffer
+	Wire.write(rtc_register);	              		// Put slave register address in Tx buffer
+	Wire.endTransmission(false);             		// Send the Tx buffer, but send a restart to keep connection alive
+	Wire.requestFrom(AM1805, (uint8_t) 1);  	// Read one byte from slave register address 
+	data = Wire.read();                      		// Fill Rx buffer with result
+	return data;                             		// Return data read from slave register
+}
+
+
+uint8_t AB1805::write_rtc_register(const uint8_t rtc_register, const uint8_t data)
+{
+	Wire.beginTransmission(AM1805);  	// Initialize the Tx buffer
+	Wire.write(rtc_register);    		// Put slave register address in Tx buffer
+	Wire.write(data);					// Put data in Tx buffer
+	Wire.endTransmission();				// Send the Tx buffer
+	return true;
+}
+
+*/
+
+```
+
+
+
+
+
 **TinyI2C** is a set of minimal I2C routines that allow just about any Microchip/Atmel AVR processor to connect to I2C peripherals.
 
 For more information and examples see [Tiny I2C Routines for all AVR Microcontrollers](http://www.technoblogy.com/show?3UF0).
